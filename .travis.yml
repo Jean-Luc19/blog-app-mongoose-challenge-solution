@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: de4ROuHJDbS0vWZfkZJD85dERzx9dlHlIGDNZgfScGMEXhdIllECUr56T6kYTziRMSKKeRdoWTidM20c4CLgUd9GtfSUk7CMVx9uQA1bLrYzJSSNIcZychonJkJsiaDe7rjojyiKefAogDxbm45xxKCvx5Nt/1HiOhB0ScydkW4s0PMTQEB5jzqUmS767mrgjTdMaErwJ5AjZ2YMeFlIS2NoLPfHrdCTe0QAWHF7xoMQcKcNbezf3yTkhDwto7e4+3PvR5qYEB2SBS7rttz/9JkteXrDe9I0yHVunek5dHXkcDQJ7GON/729YI9H9Wym8FroPzVYkKWCs40D0I4r26tRDU6ttAJ/NJbokuHTXiZm4q27Oxm9jPDYesHhMpkFDvfNBSQVSS1tdNti55ajr7DGtMmD3KiilCGzuPQAEIxizZFsTcjL64WqHyURU/TeNewBIKIRdtLbaJoVohM+KQgOQKMsc77Sb1asRa5yCkIglJpvLOE2yGFviBUOiS5h586LgMyN+hCAiYPIK3amcfj+1dPqEmWWT7G1Y0UjRJfT0Gsi8NYo/XP8Q7YdlLQoGTGEFA8ChnlJb9g98w/cY5gIFi9GEjDQZ5D1Cc0esGtRUYnxYZvpJH61azZ5OmKcGbU/I/+Fe1AJN3VXkCoJe0xO3+WSZGqe8dELjW1RhQk=
+  app: warm-cove-51888
+  on:
+    repo: Jean-Luc19/blog-app-mongoose-challenge-solution
