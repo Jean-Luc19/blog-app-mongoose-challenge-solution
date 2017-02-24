@@ -101,8 +101,85 @@ describe('BlogPost API Resource', function(){
           resPost.author.should.equal(`${post.author.firstName} ${post.author.lastName}`);
           resPost.content.should.equal(post.content);
         });
-
     });
+  });
+
+  describe('POST endpoint', function() {
+    it('should add a new post to the database', function() {
+
+      const newPost = generateBlogData();
+
+      return chai.request(app)
+      .post('/posts')
+      .send(newPost)
+      .then(function(res) {
+        res.should.have.status(201);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.include.keys('title', 'content', 'author');
+        //compare response post to the post we sent
+        res.body.title.should.equal(newPost.title);
+        res.body.content.should.equal(newPost.content);
+        res.body.author.should.equal(`${newPost.author.firstName} ${newPost.author.lastName}`);
+        return BlogPost.findById(res.body.id);
+      })
+      .then(function(post) {
+        post.title.should.equal(newPost.title);
+        post.content.should.equal(newPost.content);
+      });
+    });
+  });
+
+  describe('PUT endpoint', function() {
+    it('should update a post', function() {
+      const newData = {
+        title: "crazy new title to update lame old title with",
+        content: "new content to replace old content with the put method"
+      };
+
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(function (post) {
+          newData.id = post.id;
+          return chai.request(app)
+            .put(`/posts/${post.id}`)
+            .send(newData)
+        })
+        .then(function(res) {
+          console.log('res from put request:', res.body);
+          res.should.have.status(201);
+          return BlogPost.findById(newData.id).exec();
+        })
+        .then(function(post) {
+          post.title.should.equal(newData.title);
+          post.content.should.equal(newData.content);
+        });
+    });
+  });
+
+  describe('DELETE endpoint', function() {
+    it('should delete the item by id', function() {
+      let post;
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(function(_post) {
+          post = _post;
+
+          return chai.request(app)
+            .delete(`/posts/${_post.id}`)
+        })
+        .then(function(res) {
+          res.should.have.status(204);
+          return BlogPost
+            .findById(post.id)
+            .exec()
+            })
+            .then(function(_post){
+              should.not.exist(_post)
+            });
+    })
   });
 
 });
