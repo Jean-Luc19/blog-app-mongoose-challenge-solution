@@ -19,6 +19,7 @@ app.get('/posts', (req, res) => {
     .find()
     .exec()
     .then(posts => {
+      console.log('this connection is working', DATABASE_URL);
       res.json(posts.map(post => post.apiRepr()));
     })
     .catch(err => {
