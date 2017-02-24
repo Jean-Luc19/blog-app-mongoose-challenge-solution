@@ -22,16 +22,18 @@ function seedBlogData() {
   return BlogPost.insertMany(seedData);
 }
 function generateAuthor() {
-  return
-    {firstName: faker.name.firstName(), lastName: faker.name.lastName()};
+  return {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName()
+          };
 
 }
 function generateBlogData() {
   return {
-    title: faker.lorum.sentence(),
+    title: faker.name.findName(),
     author: generateAuthor(),
-    content: faker.lorum.paragraph(),
-    date: faker.date.past();
+    content: faker.name.findName(),
+    date: faker.date.past()
   };
 }
 
@@ -47,7 +49,7 @@ describe('BlogPost API Resource', function(){
     return runServer(TEST_DATABASE_URL);
   });
   beforeEach(function(){
-    return seedBlogData(),
+    return seedBlogData();
   });
   afterEach(function() {
     return tearDownDb();
@@ -57,20 +59,50 @@ describe('BlogPost API Resource', function(){
   });
 
   describe('GET endpoint', function() {
-    it('should return all posts'. function () {
+    it('should return all posts', function () {
       let res;
       return chai.request(app)
       .get('/posts')
-      .then(function (_res) {
+      .then(function(_res) {
         res = _res;
         res.should.have.status(200);
-        res.body.posts.should.have.length.of.at.least(1);
+        res.body.should.have.length.of.at.least(1);
         return BlogPost.count();
       })
       .then(function(count) {
-        res.body.posts.should.have.length.of(count);
+        console.log('count: ', count);
+        res.body.should.have.length.of(count);
       });
+    });
+
+    it('should return posts with the right fields', function(){
+      // We want to get all posts and make sure they have the right fields
+      let resPost; //this variable will be the the post to test against the db
+      return chai.request(app)
+        .get('/posts')
+        .then(function(res) {
+
+          res.should.have.status(200);
+          res.should.be.json;
+          res.body.should.be.a('array');
+          res.body.should.have.length.of.at.least(1);
+
+          res.body.forEach(post => {
+            post.should.be.a('object');
+            post.should.include.keys('title', 'content', 'author');
+          });
+          resPost = res.body[0];
+          return BlogPost.findById(resPost.id);
+        })
+        .then(function(post) {
+
+          resPost.id.should.equal(post.id);
+          resPost.title.should.equal(post.title);
+          resPost.author.should.equal(`${post.author.firstName} ${post.author.lastName}`);
+          resPost.content.should.equal(post.content);
+        });
+
     });
   });
 
-})
+});
